@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "collage": "file:../../modules/collage",
+    "discord.js": "^12.5.3",
+    "easyvk": "^2.8.2"
+  },
+  "devDependencies": {}
+}
