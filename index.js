@@ -33,13 +33,9 @@ vkeasy({
 
         if(message.content.startsWith('https://vk.com/wall-')) {
             let id = message.content.match(/wall(?<id>-[0-9_]*)/).groups.id;
-            console.log(id)
             vk.call('wall.getById', {
                 posts: [id]
             }).then(async res => {
-                console.log(res);
-
-                console.log(res[0]['copy_history']);
 
                 let text = res[0].text;
                 let attachments = res[0].attachments;
