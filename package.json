@@ -1,5 +1,5 @@
 {
-  "name": "vk-helper",
+  "name": "vk-embeds",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,8 +10,8 @@
     "type": "git",
     "url": "git+https://github.com/cartwheee11/vk-helper.git"
   },
-  "author": "cartwheee11",
-  "license": "MIT",
+  "author": "",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/cartwheee11/vk-helper/issues"
   },
