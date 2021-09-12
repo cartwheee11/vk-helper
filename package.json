@@ -1,8 +1,19 @@
 {
-  "dependencies": {
-    "collage": "file:../../modules/collage",
-    "discord.js": "^12.5.3",
-    "easyvk": "^2.8.2"
+  "name": "vk-helper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {}
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cartwheee11/vk-helper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cartwheee11/vk-helper/issues"
+  },
+  "homepage": "https://github.com/cartwheee11/vk-helper#readme"
 }
