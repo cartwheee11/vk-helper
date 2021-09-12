@@ -10,10 +10,15 @@
     "type": "git",
     "url": "git+https://github.com/cartwheee11/vk-helper.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "cartwheee11",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/cartwheee11/vk-helper/issues"
   },
-  "homepage": "https://github.com/cartwheee11/vk-helper#readme"
+  "homepage": "https://github.com/cartwheee11/vk-helper#readme",
+  "dependencies": {
+    "collage": "github:cartwheee11/collage",
+    "discord.js": "11.6",
+    "easyvk": "^2.8.2"
+  }
 }
