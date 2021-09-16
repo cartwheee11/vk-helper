@@ -18,7 +18,16 @@
   "homepage": "https://github.com/cartwheee11/vk-helper#readme",
   "dependencies": {
     "collage": "github:cartwheee11/collage",
-    "discord.js": "11.6",
+    "discord.js": "^12.5.3",
     "easyvk": "^2.8.2"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "prettier": "^2.4.1"
+  },
+  "eslintConfig": {
+    "extends": [ "airbnb-base", "prettier" ]
   }
 }

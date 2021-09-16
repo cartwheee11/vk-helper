@@ -1,85 +1,93 @@
-const vkeasy = require('easyvk');
-const Discord = require('discord.js');
-const config = require('./config.json');
-const collage = require('collage')
-const fs  = require('fs');
+const vkeasy = require("easyvk");
+const Discord = require("discord.js");
+const collage = require("collage");
+const config = require("./config.json");
 
-let client = new Discord.Client();
+const client = new Discord.Client();
 client.login(config.BOT_TOKEN);
 
 function getUrls(attachments) {
+  const urls = [];
+  attachments.forEach((file) => {
+    if (file.type === "photo") {
+      const { sizes } = file.photo;
+      urls.push(sizes[sizes.length - 1].url);
+    } else if (file.type === "doc") {
+      urls.push(file.doc.url);
+    }
+  });
 
-    let urls = [];
-    attachments.forEach(file => {
-        
-        if(file.type == 'photo') {
-            let sizes = file.photo.sizes;
-            urls.push(sizes[sizes.length - 1].url);
-        } else if(file.type == 'doc') {
-            urls.push(file.doc.url);
-        }
-    });
-
-    return urls;
+  return urls;
 }
 
 vkeasy({
-    token: config.SERVICE_CODE
-}).then(vk => {
-    
+  token: config.SERVICE_CODE,
+}).then(async (vk) => {
+  async function analyzeLink(url) {
+    const result = {};
+    result.images = [];
+    result.videos = [];
+    result.text = "";
 
-    client.on('message', function(message) {
-        if(message.author.bot) return;
+    if (url.includes("photo")) {
+      const { id } = url.match(/photo(?<id>-?[0-9_]*)/).groups;
+      const res = await vk.call("photos.getById", {
+        photos: [id],
+      });
+      const { sizes } = res[0];
 
-        if(message.content.startsWith('https://vk.com/wall-')) {
-            let id = message.content.match(/wall(?<id>-[0-9_]*)/).groups.id;
-            vk.call('wall.getById', {
-                posts: [id]
-            }).then(async res => {
+      result.text = res[0].text;
+      result.images.push(sizes[sizes.length - 1].url);
+    } else if (url.includes("wall")) {
+      const { id } = url.match(/wall(?<id>-?[0-9_]*)/).groups;
+      const res = await vk.call("wall.getById", {
+        posts: [id],
+      });
 
-                let text = res[0].text;
-                let attachments = res[0].attachments;
-                let urls = null
-                if(attachments) {
-                    urls = getUrls(attachments);    
-                }
-                
-                let reply = new Discord.Message();
-                if(text){
-                    collage({
-                        images: urls,
-                        width: 1000,
-                        cols: 3
-                    }).then((buffer) => {
-                        // fs.writeFileSync('./tmp.png', buffer);
+      const { attachments } = res[0];
 
-                        message.channel.send(text, {
-                            files: [ buffer ]
-                        })
-                    })
+      const urls = getUrls(attachments);
 
-                    
-                }
-                    
-            })
+      if (urls) {
+        result.images = urls;
+      }
+
+      result.text = res[0].text;
+    }
+
+    return result;
+  }
+
+  // console.log(await analyzeLink('https://vk.com'))
+
+  client.on("message", async (message) => {
+    if (message.author.bot) return;
+
+    if (message.content.includes("https://vk.com")) {
+      const data = await analyzeLink(message.content);
+      if (data.videos.length || data.images.length || data.text !== "") {
+        if (data.images.length === 1) {
+          const embed = new Discord.MessageEmbed()
+            .setImage(data.images[0])
+            .setDescription(data.text);
+          message.channel.send(embed);
+        } else {
+          const embed = new Discord.MessageEmbed().setDescription(data.text);
+          const buffer = await collage({
+            images: data.images,
+            gap: 10,
+            cols: 3,
+            width: 1000,
+            background: 0xffffffff,
+          });
+          const attachment = new Discord.MessageAttachment(
+            buffer,
+            "collage.png"
+          );
+          embed.attachFiles(attachment).setImage("attachment://collage.png");
+          message.channel.send(embed);
         }
-
-        // https://vk.com/video-99126464_456305117
-        // https://vk.com/video?z=video-1672730_456240218%2Fpl_cat_trends
-        // if(message.content.startsWith('https://vk.com/video')) {
-        //     // let videoId = message.content.replace('https://vk.com/video', '');
-        //     let videoId = message.content.match(/video(?<id>-?[0-9_]*)/).groups.id;
-        //     console.log(videoId);
-        //     vk.call('video.get', {
-        //         videos: videoId,
-        //         'owner_id': ''
-        //     }).then(function(response) {
-        //         // console.log(response);
-        //         let video = response.items[0];
-        //         let embed = new Discord.MessageEmbed().setImage(video.image[video.image.length - 1].url).setDescription(video.description);
-        //         message.reply(embed);
-        //     });
-        // }
-    })
-
+      }
+    }
+  });
 });
