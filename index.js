@@ -58,8 +58,6 @@ vkeasy({
     return result;
   }
 
-  // console.log(await analyzeLink('https://vk.com'))
-
   client.on("message", async (message) => {
     if (message.author.bot) return;
 
