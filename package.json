@@ -28,6 +28,9 @@
     "prettier": "^2.4.1"
   },
   "eslintConfig": {
-    "extends": [ "airbnb-base", "prettier" ]
+    "extends": [
+      "airbnb-base",
+      "prettier"
+    ]
   }
 }
