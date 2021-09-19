@@ -21,7 +21,7 @@ function getUrls(attachments) {
 }
 
 vkeasy({
-  token: config.SERVICE_CODE,
+  token: config.USER_TOKEN,
 }).then(async (vk) => {
   async function analyzeLink(url) {
     const result = {};
@@ -53,6 +53,19 @@ vkeasy({
       }
 
       result.text = res[0].text;
+    } else if(url.includes('video')) {
+      const { id } = url.match(/video(?<id>-?[0-9_]*)/).groups;
+      const owner_id = id.match(/[-\d]*/)[0];
+      const vieoId = id.replace((owner_id + '_'), '');
+      const res = await vk.call("video.get", {
+        owner_id,
+        videos: [id],
+      });
+
+      let images = res.items[0].image;
+      const prev = images[images .length - 1].url
+      result.images.push(prev);
+      result.text = 'ВИДЕО: ' + res.items[0].title;
     }
 
     return result;
