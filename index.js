@@ -59,15 +59,20 @@ vkeasy({
 
       result.text = res[0].text;
     } else if(url.includes('video')) {
-      const { id } = url.match(/video(?<id>-?[0-9_]*)/).groups;
+      // const { id } = url.matchAll(/video(?<id>-?[0-9_]*)/g);
+      let ex = /video(?<id>-?[0-9_]+)/;
+      const { id } = url.match(ex).groups;
+      // match = ex.exec(url);
+      // console.log(match);
+      // console.log(ex);
+      
+      
       const owner_id = id.match(/[-\d]*/)[0];
       const vieoId = id.replace((owner_id + '_'), '');
       const res = await vk.call("video.get", {
-        owner_id,
-        videos: [id],
+        "videos": [ex.exec(url).groups.id],
       });
-
-      let images = res.items[0].image;
+      const images = res.items[0].image;
       const prev = images[images .length - 1].url
       result.images.push(prev);
       result.text = 'ВИДЕО: ' + res.items[0].title;
