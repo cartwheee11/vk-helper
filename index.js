@@ -14,6 +14,11 @@ function getUrls(attachments) {
       urls.push(sizes[sizes.length - 1].url);
     } else if (file.type === "doc") {
       urls.push(file.doc.url);
+    } else if(file.type === "video") {
+
+      const images = file.video.image;
+      const prev = images[images .length - 1].url
+      urls.push(prev);
     }
   });
 
@@ -73,7 +78,6 @@ vkeasy({
 
   client.on("message", async (message) => {
     if (message.author.bot) return;
-
     if (message.content.includes("https://vk.com")) {
       const data = await analyzeLink(message.content);
       if (data.videos.length || data.images.length || data.text !== "") {
@@ -84,18 +88,20 @@ vkeasy({
           message.channel.send(embed);
         } else {
           const embed = new Discord.MessageEmbed().setDescription(data.text);
-          const buffer = await collage({
-            images: data.images,
-            gap: 10,
-            cols: 3,
-            width: 1000,
-            background: 0xffffffff,
-          });
-          const attachment = new Discord.MessageAttachment(
-            buffer,
-            "collage.png"
-          );
-          embed.attachFiles(attachment).setImage("attachment://collage.png");
+          if(data.length) {
+            const buffer = await collage({
+              images: data.images,
+              gap: 10,
+              cols: 3,
+              width: 1000,
+              background: 0xffffffff,
+            });
+            const attachment = new Discord.MessageAttachment(
+              buffer,
+              "collage.png"
+            );
+            embed.attachFiles(attachment).setImage("attachment://collage.png");
+            }
           message.channel.send(embed);
         }
       }
