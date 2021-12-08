@@ -81,14 +81,19 @@ vkeasy({
     if (message.content.includes("https://vk.com")) {
       const data = await analyzeLink(message.content);
       if (data.videos.length || data.images.length || data.text !== "") {
+        const embed = new Discord.MessageEmbed();
+
+        if(data.text){
+          embed.setDescription(data.text)
+        }
+
         if (data.images.length === 1) {
-          const embed = new Discord.MessageEmbed()
-            .setImage(data.images[0])
-            .setDescription(data.text);
+          // const embed = new Discord.MessageEmbed()
+          embed.setImage(data.images[0])
+
           message.channel.send(embed);
         } else {
-          const embed = new Discord.MessageEmbed().setDescription(data.text);
-          if(data.length) {
+          if(data.images.length) {
             const buffer = await collage({
               images: data.images,
               gap: 10,
